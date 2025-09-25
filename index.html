@@ -153,6 +153,11 @@
             border-width: 0;
         }
         /* ▲ 3. アクセシビリティ (Accessibility) ▲ */
+
+        .page { 
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            will-change: opacity, transform; /* この行を追加 */
+        }
     </style>
 </head>
 <body class="bg-day text-day">
@@ -534,28 +539,26 @@
             const nextPage = document.getElementById(pageId);
 
             if (currentPage && currentPage.id !== pageId) {
-                // 1. 現在のページに退出アニメーションクラスを追加
+                // 古いページを消すアニメーションを開始
                 currentPage.classList.add('is-exiting');
-
-                // 2. アニメーション完了後に処理を実行
-                currentPage.addEventListener('transitionend', () => {
-                    currentPage.classList.add('hidden');
-                    currentPage.classList.remove('is-exiting');
-                    
-                    // 3. 次のページを表示し、入場アニメーションクラスを追加
-                    nextPage.classList.remove('hidden', 'is-entering');
-
-                }, { once: true }); // イベントリスナーを一度だけ実行
-
-                // 次のページをアニメーションの初期状態にする
+                
+                // 新しいページを表示する準備
+                nextPage.classList.remove('hidden');
                 nextPage.classList.add('is-entering');
-                // 少し遅れてクラスを外すことでアニメーションを開始
+
+                // 短い時間差でクラスを付け替える
                 setTimeout(() => {
+                    // 新しいページを表示アニメーションを開始
                     nextPage.classList.remove('is-entering');
-                }, 50);
+                    
+                    // 古いページはアニメーションが終わる頃に完全に隠す
+                    setTimeout(() => {
+                        currentPage.classList.add('hidden');
+                        currentPage.classList.remove('is-exiting');
+                    }, 500); // CSSのtransition時間と合わせる
+                }, 10); // ごく僅かな遅延
 
             } else if (!currentPage) {
-                // 初回読み込み時
                 nextPage.classList.remove('hidden');
             }
 
