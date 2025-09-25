@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- ▼ 1. SEO・SNS共有設定 (Meta Tags) ▼ -->
+    <title>Mini-Hist Museum</title> <!-- このタイトルはJSで動的に上書きされます -->
+    <meta name="description" content="AIで旅する、手のひらの上の歴史博物館。失われた風景を、AIと共に追体験する場所。">
+    <!-- OGP (Open Graph Protocol) Tags -->
+    <meta property="og:title" content="Mini-Hist Museum | AIで旅する、手のひらの上の歴史博物館">
+    <meta property="og:description" content="失われた風景を、AIと共に追体験する場所。古代ローマから産業革命まで、AIが描く歴史のジオラマをお楽しみください。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-museum-url.com"> <!-- 本番環境のURLに書き換えてください -->
+    <meta property="og:image" content="https://your-museum-url.com/og-image.png"> <!-- 共有時に表示する画像のURL -->
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mini-Hist Museum | AIで旅する、手のひらの上の歴史博物館">
+    <meta name="twitter:description" content="失われた風景を、AIと共に追体験する場所。AIが描く歴史のジオラマをお楽しみください。">
+    <meta name="twitter:image" content="https://your-museum-url.com/og-image.png"> <!-- 共有時に表示する画像のURL -->
+    <!-- ▲ 1. SEO・SNS共有設定 (Meta Tags) ▲ -->
+
+    <!-- ▼ 2. ファビコン (Favicon) ▼ -->
+    <link rel="icon" href="https://placehold.co/32x32/0c1427/FBBF24?text=MH">
+    <link rel="apple-touch-icon" href="https://placehold.co/180x180/0c1427/FBBF24?text=MH">
+    <!-- ▲ 2. ファビコン (Favicon) ▲ -->
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome (for icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- ▼▼▼ Google Analytics 計測タグ ▼▼▼ -->
+    <!-- 下記の G-XXXXXXXXXX をご自身の計測IDに置き換えてください -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    <!-- ▲▲▲ Google Analytics 計測タグ ▲▲▲ -->
+
+    <style>
+        /* Custom styles */
+        :root {
+            /* Day Mode Colors */
+            --bg-day: #F5F5F4; /* stone-100 */
+            --text-day: #292524; /* stone-800 */
+            --accent-day: #A8A29E; /* stone-400 */
+            --card-bg-day: #FFFFFF;
+            
+            /* Night Mode Colors */
+            --bg-night: #0c1427;
+            --text-night: #E7E5E4; /* stone-200 */
+            --accent-night: #FBBF24; /* amber-400 */
+            --card-bg-night: #1c2a4a;
+        }
+
+        body {
+            font-family: 'Merriweather', serif;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        
+        body.ja { font-family: 'Noto Sans JP', sans-serif; }
+        body.zh { font-family: 'Noto Sans SC', sans-serif; }
+        body.fr { font-family: 'Merriweather', serif; }
+        body.en { font-family: 'Merriweather', serif; }
+
+        h1, h2, h3, .nav-link, .hero-button {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Basic styles for theme transition */
+        .bg-day { background-color: var(--bg-day); }
+        .text-day { color: var(--text-day); }
+        .border-day { border-color: var(--accent-day); }
+        .card-bg-day { background-color: var(--card-bg-day); }
+
+        .dark-mode {
+            background-color: var(--bg-night);
+            color: var(--text-night);
+        }
+
+        .dark-mode .bg-day { background-color: var(--bg-night); }
+        .dark-mode .text-day { color: var(--text-night); }
+        .dark-mode .border-day { border-color: var(--accent-night); }
+        .dark-mode .card-bg-day { background-color: var(--card-bg-night); }
+        .dark-mode .accent-text { color: var(--accent-night); }
+        .dark-mode .hero-button {
+            background-color: var(--accent-night);
+            color: var(--bg-night);
+        }
+        .dark-mode .hero-button:hover {
+            background-color: #F59E0B; /* amber-500 */
+        }
+       
+        /* Flashlight effect */
+        .dark-mode #flashlight {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background: radial-gradient(circle at var(--cursor-x) var(--cursor-y), rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 150px, rgba(0,0,0,0.95) 300px);
+        }
+
+        /* Night mode hover effect for gallery items */
+        .dark-mode .gallery-item:hover img {
+            transform: scale(1.05);
+            filter: brightness(1.2);
+        }
+        .dark-mode .gallery-item:hover .gallery-item-title {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero section slideshow */
+        .hero-slide {
+            display: none;
+            animation: fadeEffect 1.5s;
+        }
+        @keyframes fadeEffect {
+            from { opacity: .4 }
+            to { opacity: 1 }
+        }
+
+        /* Modal animations */
+        .modal-enter { animation: fadeIn 0.3s ease; }
+        .modal-leave { animation: fadeOut 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.95); } }
+        
+        /* ▼ 3. アクセシビリティ (Accessibility) - スクリーンリーダー用スタイル ▼ */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        /* ▲ 3. アクセシビリティ (Accessibility) ▲ */
+    </style>
+</head>
+<body class="bg-day text-day">
+
+    <div id="flashlight"></div>
+
+    <header class="sticky top-0 z-50 py-4 px-6 md:px-12 transition-all duration-300 backdrop-blur-md bg-day/80 dark-mode:bg-day/80">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-xl md:text-2xl font-bold tracking-wider nav-link" data-page="home">
+                <i class="fa-solid fa-landmark mr-2"></i>Mini-Hist Museum
+            </a>
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#" class="nav-link text-lg hover:opacity-75 transition-opacity" data-page="gallery" data-lang-key="nav_gallery"></a>
+                <!-- ▼ 「研究所」ページへのリンクを追加 ▼ -->
+                <a href="#" class="nav-link text-lg hover:opacity-75 transition-opacity" data-page="lab" data-lang-key="nav_lab"></a>
+                <a href="#" class="nav-link text-lg hover:opacity-75 transition-opacity" data-page="about" data-lang-key="nav_about"></a>
+                <a href="#" class="nav-link text-lg text-gray-400 cursor-not-allowed" data-lang-key="nav_shop"></a>
+            </nav>
+            <div class="flex items-center space-x-2">
+                <!-- Language Switcher -->
+                <div class="relative">
+                    <button id="lang-toggle" class="font-bold text-sm px-3 py-2 rounded-full flex items-center justify-center hover:bg-stone-200 dark-mode:hover:bg-gray-700 transition-colors" aria-label="Switch Language">
+                        <i class="fa-solid fa-globe mr-2"></i>
+                        <span id="current-lang"></span>
+                    </button>
+                </div>
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="text-2xl w-12 h-12 rounded-full flex items-center justify-center hover:bg-stone-200 dark-mode:hover:bg-gray-700 transition-colors" aria-label="Toggle dark mode">
+                    <i class="fa-solid fa-sun" id="sun-icon"></i>
+                    <i class="fa-solid fa-moon hidden" id="moon-icon"></i>
+                </button>
+                <button id="mobile-menu-button" class="md:hidden text-2xl ml-2" aria-label="Open menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden mt-4">
+            <a href="#" class="block py-2 text-center nav-link" data-page="gallery" data-lang-key="nav_gallery"></a>
+            <a href="#" class="block py-2 text-center nav-link" data-page="lab" data-lang-key="nav_lab"></a>
+            <a href="#" class="block py-2 text-center nav-link" data-page="about" data-lang-key="nav_about"></a>
+            <a href="#" class="block py-2 text-center text-gray-400 cursor-not-allowed" data-lang-key="nav_shop"></a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 md:px-12 py-8">
+        <!-- Home Page -->
+        <section id="home" class="page">
+            <div class="relative w-full h-[60vh] rounded-lg overflow-hidden shadow-2xl mb-16">
+                <div class="hero-slide"><img src="https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(52).jpg?raw=true" class="w-full h-full object-cover" alt="AI generated image of the historians desk with historical figures"></div>
+                <div class="hero-slide"><img src="https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(21).jpg?raw=true" class="w-full h-full object-cover" alt="AI generated image of the Parthenon being built"></div>
+                <div class="hero-slide"><img src="https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(12).jpg?raw=true" class="w-full h-full object-cover" alt="AI generated image of Stonehenge at dusk"></div>
+                <div class="hero-slide"><img src="https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(18).jpg?raw=true" class="w-full h-full object-cover" alt="AI generated image of philosophers in the ancient Greek Agora"></div>
+
+                <div class="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-center text-white p-4">
+                    <h1 id="hero-title" class="text-4xl md:text-6xl font-bold leading-tight mb-4 transition-all duration-500" data-lang-key-day="hero_title_day" data-lang-key-night="hero_title_night"></h1>
+                    <p id="hero-subtitle" class="text-lg md:text-xl max-w-2xl mb-8 transition-all duration-500" data-lang-key-day="hero_subtitle_day" data-lang-key-night="hero_subtitle_night"></p>
+                    <button class="hero-button bg-white text-stone-800 font-bold py-3 px-8 rounded-full text-lg hover:bg-stone-200 transition-all duration-300 transform hover:scale-105 nav-link" data-page="gallery" data-lang-key="hero_button"></button>
+                </div>
+            </div>
+
+            <div class="mb-16">
+                <h2 class="text-3xl font-bold mb-8 border-b-2 border-day pb-4" data-lang-key="latest_exhibits"></h2>
+                <div id="latest-exhibits" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+            </div>
+
+             <div>
+                <h2 class="text-3xl font-bold mb-8 border-b-2 border-day pb-4" data-lang-key="popular_exhibits"></h2>
+                <div id="popular-exhibits" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+            </div>
+        </section>
+
+        <!-- Gallery Page -->
+        <section id="gallery" class="page hidden">
+            <h1 class="text-4xl font-bold mb-8 text-center" data-lang-key="gallery_title"></h1>
+            
+            <div class="flex flex-wrap justify-center gap-4 mb-12" id="filters">
+                <div class="filter-group">
+                    <label class="font-bold mr-2" data-lang-key="filter_era"></label>
+                    <select class="filter-select bg-day border border-day p-2 rounded-lg" data-filter="era" data-lang-key-options="filter_era_options"></select>
+                </div>
+                 <div class="filter-group">
+                    <label class="font-bold mr-2" data-lang-key="filter_region"></label>
+                    <select class="filter-select bg-day border border-day p-2 rounded-lg" data-filter="region" data-lang-key-options="filter_region_options"></select>
+                </div>
+                <div class="filter-group">
+                    <label class="font-bold mr-2" data-lang-key="filter_theme"></label>
+                     <select class="filter-select bg-day border border-day p-2 rounded-lg" data-filter="theme" data-lang-key-options="filter_theme_options"></select>
+                </div>
+            </div>
+            
+            <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+        </section>
+        
+        <!-- ▼ 「研究所 / 舞台裏」ページを追加 ▼ -->
+        <section id="lab" class="page hidden">
+            <div class="max-w-4xl mx-auto">
+                <h1 class="text-4xl font-bold mb-8 text-center" data-lang-key="lab_title"></h1>
+                <div class="space-y-12">
+                    <!-- Blog Post 1 -->
+                    <div class="card-bg-day p-8 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-bold mb-4 accent-text" data-lang-key="lab_post1_title"></h2>
+                        <p class="mb-4" data-lang-key="lab_post1_text"></p>
+                        <a href="#" class="font-bold hover:underline" data-lang-key="lab_read_more"></a>
+                    </div>
+                    <!-- Blog Post 2 -->
+                    <div class="card-bg-day p-8 rounded-lg shadow-lg">
+                        <h2 class="text-2xl font-bold mb-4 accent-text" data-lang-key="lab_post2_title"></h2>
+                        <p class="mb-4" data-lang-key="lab_post2_text"></p>
+                        <a href="#" class="font-bold hover:underline" data-lang-key="lab_read_more"></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ▲ 「研究所 / 舞台裏」ページを追加 ▲ -->
+
+
+        <!-- About Page -->
+        <section id="about" class="page hidden">
+            <div class="max-w-4xl mx-auto">
+                <h1 class="text-4xl font-bold mb-8 text-center" data-lang-key="about_title"></h1>
+                <div class="card-bg-day p-8 rounded-lg shadow-lg text-lg leading-relaxed space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-bold mb-4 accent-text" data-lang-key="about_mission_title"></h2>
+                        <p data-lang-key="about_mission_text"></p>
+                    </div>
+                     <div>
+                        <h2 class="text-2xl font-bold mb-4 accent-text" data-lang-key="about_ai_title"></h2>
+                        <p data-lang-key="about_ai_text"></p>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold mb-4 accent-text" data-lang-key="about_curator_title"></h2>
+                        <div class="flex items-center">
+                            <img src="https://placehold.co/100x100/0c1427/FBBF24?text=MH" alt="Curator Avatar" class="rounded-full mr-6">
+                            <div>
+                                <h3 class="font-bold text-xl">Mini-Hist</h3>
+                                <p data-lang-key="about_curator_text"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-16 card-bg-day p-8 rounded-lg shadow-lg text-center">
+                     <h2 class="text-2xl font-bold mb-4" data-lang-key="newsletter_title"></h2>
+                     <p class="mb-6" data-lang-key="newsletter_text"></p>
+                     <!-- ▼ 4. フォームの実機能 (Formspree) ▼ -->
+                     <form id="newsletter-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" class="flex justify-center"> <!-- "YOUR_FORM_ID" をあなたのFormspreeのIDに置き換えてください -->
+                         <input type="email" name="email" class="p-3 rounded-l-lg w-full max-w-sm text-stone-800" data-lang-key="newsletter_placeholder" placeholder="" required>
+                         <button type="submit" class="hero-button bg-stone-800 dark-mode:bg-day text-white dark-mode:text-day font-bold p-3 rounded-r-lg" data-lang-key="newsletter_button"></button>
+                     </form>
+                     <p id="form-status" class="mt-4"></p>
+                     <!-- ▲ 4. フォームの実機能 (Formspree) ▲ -->
+                 </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Window -->
+    <div id="modal-container" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
+        <div id="modal-content" class="card-bg-day rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto relative p-6 md:p-8"></div>
+        <button id="modal-close" class="absolute top-4 right-4 text-white text-4xl hover:opacity-75" aria-label="Close modal">&times;</button>
+    </div>
+
+    <footer class="text-center py-8 mt-12 border-t border-day">
+        <p data-lang-key="footer_text"></p>
+        <div class="mt-4 text-2xl space-x-6">
+            <!-- ▼ 3. アクセシビリティ (Accessibility) - アイコンにaria-labelを追加 ▼ -->
+            <a href="#" class="hover:opacity-75 transition-opacity" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" class="hover:opacity-75 transition-opacity" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" class="hover:opacity-75 transition-opacity" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+            <!-- ▲ 3. アクセシビリティ (Accessibility) ▲ -->
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Language Data ---
+        const translations = {
+            ja: {
+                site_title: "Mini-Hist Museum | AIで旅する、手のひらの上の歴史博物館",
+                nav_gallery: "ギャラリー", nav_lab: "研究所", nav_about: "博物館について", nav_shop: "ショップ (準備中)",
+                hero_title_day: "AIで旅する、手のひらの上の歴史博物館", hero_subtitle_day: "失われた風景を、AIと共に追体験する場所。",
+                hero_title_night: "ようこそ、夜の博物館へ。", hero_subtitle_night: "展示品たちの声に耳を澄ませてみてください…",
+                hero_button: "展示室へ",
+                latest_exhibits: "最新の展示", popular_exhibits: "人気の展示",
+                gallery_title: "博物館 / The Museum",
+                filter_era: "時代:", filter_region: "地域:", filter_theme: "テーマ:",
+                filter_era_options: { all: "すべて", ancient: "古代", medieval: "中世", renaissance: "ルネサンス", modern: "近代" },
+                filter_region_options: { all: "すべて", europe: "ヨーロッパ", asia: "アジア", africa: "アフリカ", americas: "アメリカ" },
+                filter_theme_options: { all: "すべて", architecture: "建築", war: "戦争", life: "生活", mythology: "神話" },
+                lab_title: "研究所 / The Lab",
+                lab_post1_title: "研究ノート: AIは「日本の鎧」をどう描くか？", lab_post1_text: "AIに「Samurai Armor」と指示しただけでは、ファンタジーのような鎧が生成されることが多い。本物の質感と様式美を再現するためのプロンプトの探求。",
+                lab_post2_title: "舞台裏: 「パルテノン神殿」制作の挑戦", lab_post2_text: "古代の建築物をミニチュアで再現する際、AIはディテールを誇張しがちだ。リアリティと芸術性のバランスを取るための試行錯誤の記録。",
+                lab_read_more: "続きを読む...",
+                about_title: "博物館について / About",
+                about_mission_title: "ミッション", about_mission_text: "私たちの博物館は、歴史の教科書に記された出来事を、単なる文字の羅列としてではなく、血の通った「物語」として追体験できる場所です。AIという現代の魔法を使い、失われた風景や人々の息づかいを、手のひらの上のジオラマとして再現します。歴史教育とエンターテイメントを融合させ、あらゆる世代の知的好奇心を刺激することが私たちの使命です。",
+                about_ai_title: "AIとの関わり", about_ai_text: "当館の展示物はすべて、AI（画像生成AI）との共同制作によって生み出されています。AIは単なるツールではありません。私たちの歴史知識や情熱を伝えることで、AIは無限の可能性の中からビジュアルを紡ぎ出してくれる「創造のパートナー」です。館長（キュレーター）の持つ歴史への深い理解がプロンプトとなり、AIに命を吹き込みます。",
+                about_curator_title: "館長プロフィール", about_curator_text: "歴史愛好家であり、AIクリエイター。学生時代に訪れた映画「ナイトミュージアM」の世界に魅了され、'もしも歴史が動き出したら'という夢をAIと共に追いかけている。",
+                newsletter_title: "ミュージアム会員通信", newsletter_text: "限定公開の展示や、制作の舞台裏をお届けします。高画質の壁紙セットもプレゼント！",
+                newsletter_placeholder: "メールアドレスを入力", newsletter_button: "登録", form_success: "ご登録ありがとうございます！", form_error: "エラーが発生しました。もう一度お試しください。",
+                modal_curator_notes: "学芸員の解説", modal_ai_prompt: "生成プロンプト", modal_copy_prompt: "プロンプトをコピー", modal_copied: "コピーしました！", modal_share: "この作品を共有する",
+                footer_text: "© 2025 Mini-Hist Museum. All Rights Reserved."
+            },
+            en: {
+                site_title: "Mini-Hist Museum | A Palm-Sized History Museum, Journey Through with AI",
+                nav_gallery: "Gallery", nav_lab: "Lab", nav_about: "About", nav_shop: "Shop (Coming Soon)",
+                hero_title_day: "A Palm-Sized History Museum, Journey Through with AI", hero_subtitle_day: "A place to relive lost landscapes with the help of AI.",
+                hero_title_night: "Welcome, to the museum at night.", hero_subtitle_night: "Listen closely to the voices of the exhibits...",
+                hero_button: "Enter the Exhibits",
+                latest_exhibits: "Latest Exhibits", popular_exhibits: "Popular Exhibits",
+                gallery_title: "The Museum",
+                filter_era: "Era:", filter_region: "Region:", filter_theme: "Theme:",
+                filter_era_options: { all: "All", ancient: "Ancient", medieval: "Medieval", renaissance: "Renaissance", modern: "Modern" },
+                filter_region_options: { all: "All", europe: "Europe", asia: "Asia", africa: "Africa", americas: "Americas" },
+                filter_theme_options: { all: "All", architecture: "Architecture", war: "War", life: "Life", mythology: "Mythology" },
+                lab_title: "The Lab",
+                lab_post1_title: "Research Notes: How Does AI Portray 'Japanese Armor'?", lab_post1_text: "Simply instructing AI with 'Samurai Armor' often results in fantasy-like armor. This is an exploration of prompts to reproduce authentic textures and styles.",
+                lab_post2_title: "Behind the Scenes: The Challenge of Creating the 'Parthenon'", lab_post2_text: "When recreating ancient buildings in miniature, AI tends to exaggerate details. A record of trial and error to balance realism and artistry.",
+                lab_read_more: "Read more...",
+                about_title: "About the Museum",
+                about_mission_title: "Our Mission", about_mission_text: "Our museum is a place to experience the events of history not just as text, but as living, breathing stories. Using the modern magic of AI, we recreate lost landscapes and the whispers of the past in palm-sized dioramas. Our mission is to merge historical education with entertainment, stimulating the intellectual curiosity of all generations.",
+                about_ai_title: "Our Relationship with AI", about_ai_text: "All exhibits in this museum are co-created with AI. For us, AI is not merely a tool; it's a creative partner. By conveying our historical knowledge and passion, AI weaves visuals from infinite possibilities. The curator's deep understanding of history becomes the prompt that breathes life into AI.",
+                about_curator_title: "Curator Profile", about_curator_text: "A history enthusiast and AI creator. Fascinated by the world of the movie 'Night at the Museum' since college, now chasing the dream of 'what if history came alive' with the help of AI.",
+                newsletter_title: "Museum Newsletter", newsletter_text: "Get access to exclusive exhibits and behind-the-scenes content. Plus, a free set of high-res wallpapers!",
+                newsletter_placeholder: "Enter your email address", newsletter_button: "Subscribe", form_success: "Thank you for subscribing!", form_error: "An error occurred. Please try again.",
+                modal_curator_notes: "Curator's Notes", modal_ai_prompt: "AI Generation Prompt", modal_copy_prompt: "Copy Prompt", modal_copied: "Copied!", modal_share: "Share this Exhibit",
+                footer_text: "© 2025 Mini-Hist Museum. All Rights Reserved."
+            },
+            fr: {
+                site_title: "Mini-Hist Museum | Un musée d'histoire dans la paume de votre main",
+                nav_gallery: "Galerie", nav_lab: "Labo", nav_about: "À propos", nav_shop: "Boutique (Bientôt)",
+                hero_title_day: "Un musée d'histoire dans la paume de votre main, un voyage avec l'IA", hero_subtitle_day: "Un lieu pour revivre des paysages perdus avec l'aide de l'IA.",
+                hero_title_night: "Bienvenue au musée, la nuit.", hero_subtitle_night: "Écoutez attentivement les voix des expositions...",
+                hero_button: "Entrer dans les salles",
+                latest_exhibits: "Dernières Expositions", popular_exhibits: "Expositions Populaires",
+                gallery_title: "Le Musée",
+                filter_era: "Époque:", filter_region: "Région:", filter_theme: "Thème:",
+                filter_era_options: { all: "Toutes", ancient: "Antiquité", medieval: "Moyen Âge", renaissance: "Renaissance", modern: "Moderne" },
+                filter_region_options: { all: "Toutes", europe: "Europe", asia: "Asie", africa: "Afrique", americas: "Amériques" },
+                filter_theme_options: { all: "Toutes", architecture: "Architecture", war: "Guerre", life: "Vie", mythology: "Mythologie" },
+                lab_title: "Le Laboratoire", lab_post1_title: "Notes de recherche : Comment l'IA dépeint-elle une « armure japonaise » ?", lab_post1_text: "Donner simplement pour instruction à l'IA de créer une « armure de samouraï » aboutit souvent à une armure de type fantastique. Il s'agit d'une exploration d'invites visant à reproduire des textures et des styles authentiques.", lab_post2_title: "Coulisses : Le défi de la création du « Parthénon »", lab_post2_text: "Lors de la recréation de bâtiments anciens en miniature, l'IA a tendance à exagérer les détails. Un enregistrement d'essais et d'erreurs pour équilibrer réalisme et art.", lab_read_more: "Lire la suite...",
+                about_title: "À propos du Musée",
+                about_mission_title: "Notre Mission", about_mission_text: "Notre musée est un lieu pour vivre les événements de l'histoire non seulement comme du texte, mais comme des histoires vivantes. Grâce à la magie moderne de l'IA, nous recréons des paysages perdus et les murmures du passé dans des dioramas de la taille d'une paume.",
+                about_ai_title: "Notre Relation avec l'IA", about_ai_text: "Toutes les expositions de ce musée sont co-créées avec l'IA. Pour nous, l'IA n'est pas simplement un outil; c'est un partenaire créatif. En transmettant notre connaissance et notre passion pour l'histoire, l'IA tisse des visuels à partir de possibilités infinies.",
+                about_curator_title: "Profil du Conservateur", about_curator_text: "Un passionné d'histoire et créateur d'IA. Fasciné par le monde du film 'La Nuit au musée' depuis l'université, il poursuit maintenant le rêve de 'et si l'histoire prenait vie' avec l'aide de l'IA.",
+                newsletter_title: "Lettre d'Information du Musée", newsletter_text: "Accédez à des expositions exclusives et à du contenu en coulisses. De plus, un ensemble gratuit de fonds d'écran haute résolution!",
+                newsletter_placeholder: "Entrez votre adresse e-mail", newsletter_button: "S'abonner", form_success: "Merci de vous être abonné !", form_error: "Une erreur est survenue. Veuillez réessayer.",
+                modal_curator_notes: "Notes du Conservateur", modal_ai_prompt: "Invite de Génération IA", modal_copy_prompt: "Copier l'invite", modal_copied: "Copié !", modal_share: "Partager cette pièce",
+                footer_text: "© 2025 Mini-Hist Museum. Tous droits réservés."
+            },
+            zh: {
+                site_title: "迷你历史博物馆 | AI掌上历史博物馆之旅",
+                nav_gallery: "画廊", nav_lab: "研究室", nav_about: "关于我们", nav_shop: "商店 (即将推出)",
+                hero_title_day: "AI掌上历史博物馆之旅", hero_subtitle_day: "一个借助AI重温失落景观的地方。",
+                hero_title_night: "欢迎来到夜间的博物馆。", hero_subtitle_night: "请仔细聆听展品的声音…",
+                hero_button: "进入展厅",
+                latest_exhibits: "最新展览", popular_exhibits: "热门展览",
+                gallery_title: "博物馆 / The Museum",
+                filter_era: "时代:", filter_region: "地区:", filter_theme: "主题:",
+                filter_era_options: { all: "全部", ancient: "古代", medieval: "中世纪", renaissance: "文艺复兴", modern: "近代" },
+                filter_region_options: { all: "全部", europe: "欧洲", asia: "亚洲", africa: "非洲", americas: "美洲" },
+                filter_theme_options: { all: "全部", architecture: "建筑", war: "战争", life: "生活", mythology: "神话" },
+                lab_title: "研究室", lab_post1_title: "研究笔记：人工智能如何描绘“日本盔甲”？", lab_post1_text: "仅仅用“武士盔甲”来指导人工智能，往往会产生奇幻般的盔甲。这是一项旨在再现真实纹理和风格的提示探索。", lab_post2_title: "幕后花絮：创造“帕台农神庙”的挑战", lab_post2_text: "在微缩模型中重建古代建筑时，人工智能往往会夸大细节。这是一份在现实主义和艺术性之间取得平衡的反复试验记录。", lab_read_more: "阅读更多...",
+                about_title: "关于博物馆",
+                about_mission_title: "我们的使命", about_mission_text: "我们的博物馆不仅是通过文字体验历史事件的地方，更是通过生动的故事。利用AI这一现代魔法，我们在掌中立体模型中重现失落的景观和过去的低语。我们的使命是融合历史教育与娱乐，激发各代人的求知欲。",
+                about_ai_title: "我们与AI的关系", about_ai_text: "本馆所有展品均与AI共同创作。对我们而言，AI不仅仅是一个工具，更是一个创造性的伙伴。通过传达我们的历史知识和热情，AI从无限的可能性中编织出视觉效果。馆长的历史知识成为赋予AI生命力的提示。",
+                about_curator_title: "馆长简介", about_curator_text: "一位历史爱好者和AI创作者。自大学时代起就对电影《博物馆奇妙夜》的世界着迷，现在借助AI追逐‘如果历史活过来’的梦想。",
+                newsletter_title: "博物馆通讯", newsletter_text: "获取独家展览和幕后内容。此外，还有一套免费的高清壁纸！",
+                newsletter_placeholder: "请输入您的电子邮件地址", newsletter_button: "订阅", form_success: "感谢您的订阅！", form_error: "发生错误。请再试一次。",
+                modal_curator_notes: "馆长笔记", modal_ai_prompt: "AI生成提示", modal_copy_prompt: "复制提示", modal_copied: "已复制！", modal_share: "分享此展品",
+                footer_text: "© 2025 迷你历史博物馆。版权所有。"
+            }
+        };
+
+        // ★★★★★ 修正点：展示データを復元 ★★★★★
+        const exhibits = [
+            { id: 1, era: 'ancient', region: 'europe', theme: 'architecture', imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(12).jpg?raw=true', popular: true, aiPrompt: "Miniature model of 'Construction of Stonehenge: Ancient people carrying huge stones.' Diorama-style, shot with a tilt-shift lens, bird's-eye view, extremely detailed, photorealistic", ja: { title: "ストーンヘンジの建設：巨大な石を運ぶ古代の人々。", description: "🌌240km以上離れた場所から巨大な石を運んだ古代の人々――なぜ彼らはそこまでしてストーンヘンジを築こうとしたのでしょうか。今回ご紹介するAI生成の箱ジオラマ「ストーンヘンジへの道」には、木製のソリで巨石を引き、時に地面に動物の脂を塗って滑りを良くしたとも伝えられる人々の姿が再現されています。この事業は一世代で終わるものではなく、歌や祈りとともに何世紀にもわたり受け継がれた共同体の営みでした。彼らが運んでいたのは石だけではなく、未来への希望や信仰だったのかもしれません。では現代の私たちが心を一つにすれば、どのような“ストーンヘンジ”を築けるのでしょうか。" }, en: { title: "Building Stonehenge: Ancient people carrying giant stones.", description: "🌌Ancient people transported huge stones from over 240km away—why did they go to such lengths to build Stonehenge? This AI-generated box diorama, 'The Road to Stonehenge,' recreates the people who pulled the giant stones on wooden sleds, sometimes even smearing animal fat on the ground to make it smoother. This project was not completed with one generation; it was a communal effort passed down through centuries, accompanied by song and prayer. Perhaps they were transporting more than just stones; they were also carrying hopes and faith for the future. So, what kind of 'Stonehenge' can we build today if we join forces?" }, fr: { title: "Construction de Stonehenge : Des peuples anciens transportant des pierres géantes.", description: "🌌Les peuples anciens transportaient d'énormes pierres à plus de 240 km de distance. Pourquoi ont-ils déployé tant d'efforts pour construire Stonehenge ? Ce diorama en boîte généré par l'IA, « La Route de Stonehenge », recrée les hommes qui tiraient les pierres géantes sur des traîneaux en bois, allant même parfois jusqu'à enduire le sol de graisse animale pour le rendre plus lisse. Ce projet ne s'est pas concrétisé en une génération ; il s'agissait d'un effort collectif transmis de génération en génération, accompagné de chants et de prières. Peut-être transportaient-ils plus que de simples pierres ; ils étaient aussi porteurs d'espoir et de foi en l'avenir. Alors, quel genre de « Stonehenge » pouvons-nous construire aujourd'hui si nous unissons nos forces ?" }, zh: { title: "建造巨石阵：古代人搬运巨石。", description: "🌌古人从240多公里外运送巨石——他们为何要如此费力地建造巨石阵？这幅名为“通往巨石阵之路”的AI盒子立体模型，重现了那些用木制雪橇拉着巨石的人们，有时甚至会在地面上涂抹动物脂肪，使其更加平滑。这项工程并非仅靠一代人的努力就能完成；它是几个世纪以来，伴随着歌声和祈祷的共同努力。或许，他们运送的不仅仅是巨石，他们还承载着对未来的希望和信念。那么，如果我们今天齐心协力，能够建造出怎样的“巨石阵”呢？" } },
+            { id: 2, era: 'ancient' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(13).jpg?raw=true' , popular: true , aiPrompt: "Miniature model of 'Life on the Nile in Ancient Egypt: Papyrus boats sailing and farming activities.' Diorama-style, shot with a tilt-shift lens, bird's-eye view, exquisite detail, photorealistic" , ja: { title: "古代エジプト、ナイル川の生活：パピルスの船が行き交い、農作業が行われる日常。" , description: "🌊「ナイル川がなければエジプト文明は存在しなかった」と言われるほど、川は人々の命を支えていました。今回ご紹介するAI生成の箱ジオラマ作品では、パピルスの小舟が行き交い、農夫たちが畑で働く古代エジプトの日常が丁寧に描かれています。王や神殿の物語の陰で文明を支えたのは、氾濫によって肥沃な土を得て「また一年生きられる」と安堵する農民たちであり、舟に積まれたのは穀物や家畜だけでなく、恋人への贈り物や家族への手紙だったかもしれません。そんな小さな喜びと祈りが流れたナイルの姿は、ネットワークや物流といった「川」に命を預ける私たち自身の姿にも重なります。途絶えたときに気づく脆さ、そして日々支える存在への感謝を、古代人はすでに知っていたのかもしれません。" }, en: { title: "Life on the Nile in ancient Egypt: Papyrus boats sailing back and forth and farming activities taking place." , description: "🌊The river sustained people's lives, so much so that it's said that 'Egyptian civilization would not have existed without the Nile River.' This AI-generated box diorama carefully depicts the daily lives of ancient Egyptians, with papyrus boats coming and going and farmers toiling in the fields. Behind the stories of kings and temples, civilization was sustained by farmers who, relieved that floods would provide fertile soil and ensure another year of life, carried not only grain and livestock but also gifts for loved ones and letters to family. The image of the Nile, where such small joys and prayers flowed, overlaps with our own lives, entrusting our lives to 'rivers'—networks and logistics. Perhaps ancient people already knew the fragility of our lives when they are interrupted, and the gratitude we feel for the daily support they provide." }, fr: { title: "La vie sur le Nil dans l'Égypte ancienne : des bateaux en papyrus naviguant dans les deux sens et des activités agricoles en cours." , description: "Le fleuve subvenait à la vie des gens, à tel point qu'on dit que « la civilisation égyptienne n'aurait pas existé sans le Nil ». Ce diorama en boîte, généré par l'IA, dépeint avec précision le quotidien des anciens Égyptiens, avec les allées et venues des bateaux de papyrus et les labourages des champs. Derrière les récits des rois et des temples, la civilisation reposait sur les agriculteurs qui, soulagés que les crues fertilisent les sols et assurent une année de vie supplémentaire, transportaient non seulement des céréales et du bétail, mais aussi des cadeaux pour leurs proches et des lettres à leurs proches. L'image du Nil, lieu de ces petites joies et prières, se confond avec nos propres vies, confiées aux « fleuves » – réseaux et logistique. Peut-être les anciens connaissaient-ils déjà la fragilité de nos vies lorsqu'elles sont interrompues, et la gratitude que nous ressentons pour le soutien quotidien qu'elles nous apportent." }, zh: { title: "古埃及尼罗河上的生活：纸莎草船来回航行，进行农耕活动。" , description: "🌊尼罗河维系着人们的生命，以至于人们常说“没有尼罗河，埃及文明就不会存在”。这幅人工智能生成的盒子立体模型细致地描绘了古埃及人的日常生活：纸莎草船来来往往，农民在田间辛勤劳作。在国王和神庙的故事背后，文明的维系离不开农民，他们欣慰洪水能带来肥沃的土壤，确保来年的生命，他们不仅运送粮食和牲畜，还为亲人送去礼物和书信。尼罗河的景象，流淌着这些小小的喜悦和祈祷，与我们的生活交织在一起，将我们的生命托付给“河流”——网络和物流。或许古人早已深知生命被打断时的脆弱，以及我们对它们每日给予的支持所怀有的感激之情。" } },
+            { id: 3, era: 'ancient' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(14).jpg?raw=true' , popular: true , aiPrompt: "Miniature model of the construction of the Great Pyramids of Giza and the Sphinx: the spectacular sight of tens of thousands of workers moving stone. Diorama-style, shot with a tilt-shift lens, bird's-eye view, exquisite detail, photorealistic" , ja: { title: "ギザの三大ピラミッドとスフィンクスの建設：何万人もの労働者が石を運ぶ壮大な光景。" , description: "🏺ピラミッドを築いたのは奴隷ではなく、パンとビールを糧に誇りをもって働いた人々だったかもしれません。今回ご紹介するAI生成の箱ジオラマ「ギザの建設者たち」には、土の斜面を何万人もの労働者が石灰岩の巨石を運び、やがてスフィンクスが大地から姿を現す壮大な風景が描かれています。発掘調査では労働者の町跡が見つかり、そこにはパン工房や醸造所、医療施設まで備わっていたことが分かっています。折れた骨が治癒した痕跡もあり、彼らが大切に扱われていた証拠です。これは王への奉仕を超えた国家的事業であり、人々が信仰と誇りを胸に築いた「天への階段」だったのでしょう。では現代の私たちが心を一つにしたとき、どんな“ピラミッド”を生み出せるのでしょうか。" }, en: { title: "The construction of the Great Pyramids of Giza and the Sphinx: the spectacular sight of tens of thousands of workers moving stone." , description: "🏺The pyramids may not have been built by slaves, but by people who worked with pride, subsisting on bread and beer. The AI-generated box diorama 'The Builders of Giza' depicts a spectacular scene in which tens of thousands of workers carried limestone boulders up a dirt slope, eventually leading to the Sphinx emerging from the earth. Excavations have uncovered the remains of a workers' town, complete with a bakery, brewery, and even medical facilities. There are also signs of healing from broken bones, evidence that the workers were well-treated. This was a national project that went beyond service to the king; it was a 'stairway to heaven' built with faith and pride. So, what kind of 'pyramid' can we create today if we unite our hearts?" }, fr: { title: "La construction des grandes pyramides de Gizeh et du Sphinx : le spectacle spectaculaire de dizaines de milliers d'ouvriers déplaçant la pierre." , description: "Les pyramides n'ont peut-être pas été construites par des esclaves, mais par des gens qui travaillaient avec fierté, subsistant de pain et de bière. Le diorama en boîte, généré par l'IA, « Les Bâtisseurs de Gizeh », dépeint une scène spectaculaire où des dizaines de milliers d'ouvriers transportaient des blocs de calcaire sur une pente de terre, menant finalement au Sphinx émergeant de terre. Des fouilles ont mis au jour les vestiges d'une cité ouvrière, avec une boulangerie, une brasserie et même des installations médicales. On y trouve également des signes de guérison de fractures, preuve que les ouvriers étaient bien traités. Ce projet national allait au-delà du service du roi ; c'était un « escalier vers le ciel » construit avec foi et fierté. Alors, quel genre de « pyramide » pouvons-nous créer aujourd'hui si nous unissons nos cœurs ?" }, zh: { title: "吉萨金字塔和狮身人面像的建造：数以万计的工人搬运石头的壮观景象。" , description: "🏺金字塔或许并非由奴隶建造，而是由那些以面包和啤酒为生、满怀自豪地辛勤劳作的人们建造的。人工智能生成的立体模型“吉萨的建造者”描绘了一幅壮观的景象：成千上万的工人将石灰石巨石抬上土坡，最终将狮身人面像拔地而起。考古发掘发现了一个工人城镇的遗迹，里面有面包房、酿酒厂，甚至还有医疗设施。此外，还发现了骨折愈合的痕迹，证明工人们受到了良好的待遇。这是一项超越服务国王的国家工程；它是一条用信仰和自豪感建造的“通往天堂的阶梯”。那么，如果我们今天团结一心，我们又能创造出怎样的“金字塔”呢？" } },
+            { id: 4, era: 'ancient' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(15).jpg?raw=true' , popular: true , aiPrompt: "Miniature model of 'Discovery of King Tutankhamun's Tomb: The Chamber with the Glittering Golden Mask and Howard Carter.' Diorama-style, shot with a tilt-shift lens, bird's-eye view, exquisite detail, photorealistic" , ja: { title: "ツタンカーメン王の墓の発見：黄金のマスクが輝く墓室とハワード・カーター。" , description: "「何か見えるか？」―1922年、ツタンカーメン王の墓室を前にしたハワード・カーターの返答は「ええ、素晴らしいものが」。今回のAI生成ジオラマでは、閉ざされた扉の奥に広がる黄金の輝きと、歴史的瞬間を前に息を呑む探検家の姿を再現しました。発見当時の記録には、宝物のまばゆい光景だけでなく、埃に覆われた日用品や壊れた家具など、王が“人として生きた痕跡”も残されていたと伝わります。この発見は考古学を一変させ、同時に「呪い」の噂までも生んで世界を震撼させました。私たちが未来へ残すものは、豪華な遺産でしょうか、それとも日々の暮らしの記憶でしょうか。" }, en: { title: "Discovering King Tutankhamun's Tomb: Chamber containing gleaming golden mask and Howard Carter." , description: "'Do you see anything?' Howard Carter asked in 1922 as he stood before King Tutankhamun's tomb, to which he replied, 'Yes, it's magnificent.' This AI-generated diorama recreates the golden glow that lies beyond the closed door, as well as the breathtaking image of the explorer before this historic moment. Records from the time of the discovery reveal not only the dazzling sight of the treasures, but also traces of the king's human life, such as dusty everyday items and broken furniture. This discovery transformed archaeology and shocked the world, even giving rise to rumors of a 'curse.' Will we leave behind a luxurious legacy or mere memories of our everyday lives?" }, fr: { title: "À la découverte du tombeau du roi Toutankhamon : chambre contenant un masque doré brillant et Howard Carter." , description: "« Voyez-vous quelque chose ? » demanda Howard Carter en 1922, devant le tombeau du roi Toutânkhamon. Il répondit : « Oui, c'est magnifique. » Ce diorama généré par l'IA recrée la lueur dorée qui se cache derrière la porte close, ainsi que l'image saisissante de l'explorateur avant ce moment historique. Les archives de l'époque de la découverte révèlent non seulement le spectacle éblouissant des trésors, mais aussi des traces de la vie du roi, comme des objets du quotidien poussiéreux et des meubles brisés. Cette découverte a transformé l'archéologie et bouleversé le monde, suscitant même des rumeurs de « malédiction ». Laisserons-nous derrière nous un héritage luxueux ou de simples souvenirs de notre quotidien ?" }, zh: { title: "发现图坦卡蒙国王的陵墓：墓室内有闪闪发光的金色面具和霍华德·卡特。" , description: "“你看到什么了吗？”1922年，霍华德·卡特站在图坦卡蒙国王的陵墓前问道。他回答道：“是的，它太宏伟了。”这幅人工智能生成的立体模型重现了紧闭的门后金光闪闪的景象，以及探险者在这一历史性时刻前那令人叹为观止的形象。考古发现时的记录不仅揭示了宝藏的璀璨景象，还揭示了国王生前生活的痕迹，例如布满灰尘的日常用品和破损的家具。这一发现改变了考古学，震惊了世界，甚至引发了“诅咒”的传言。我们留下的究竟是奢华的遗产，还是仅仅是日常生活的回忆？" } },
+            { id: 5, era: 'ancient' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(18).jpg?raw=true' , popular: true , aiPrompt: "Miniature model of the Athenian Agora, Ancient Greece: the marketplace where the philosopher Socrates converses with the citizens. Diorama-style, shot with a tilt-shift lens, bird's-eye view, exquisite detail, photorealistic" , ja: { title: "古代ギリシャ、アテネのアゴラ：哲学者ソクラテスが市民と対話する市場。" , description: "もし街角の雑踏こそが最高の学び舎だったとしたら？――このAI生成ジオラマは、古代アテネのアゴラで市民と語り合うソクラテスの姿を描いています。彼は立派な講堂ではなく、市場で誰にでも問いを投げかけ、相手の中に隠れた答えを引き出そうとしました。その率直すぎる問いかけは人々を目覚めさせる一方で、権力者の反感も買うことに。けれどもその営みは「考える勇気」の大切さを後世に伝えています。私たちもSNSという現代の“広場”で、自分の意見をただ主張するだけでなく、本当に問い直す姿勢を持てているでしょうか。" }, en: { title: "The Agora of Athens, ancient Greece: the marketplace where the philosopher Socrates converses with citizens." , description: "What if the hustle and bustle of the streets was the ultimate learning space? This AI-generated diorama depicts Socrates conversing with citizens in the agora of ancient Athens. He didn't attend grand lecture halls, but rather in the marketplace, posing questions to anyone and everyone, hoping to draw out hidden answers. While his overly frank questions awakened people, they also earned the ire of those in power. However, his actions convey to future generations the importance of the 'courage to think.' In the modern 'forum' of social media, are we also able to truly question things rather than simply asserting our own opinions?" }, fr: { title: "L'Agora d'Athènes, Grèce antique : la place du marché où le philosophe Socrate converse avec les citoyens." , description: "Et si l'agitation des rues était le lieu d'apprentissage par excellence ? Ce diorama généré par l'IA représente Socrate conversant avec les citoyens sur l'agora de l'Athènes antique. Il n'assistait pas à de grands amphithéâtres, mais plutôt sur la place du marché, posant des questions à tout un chacun, espérant en tirer des réponses cachées. Si ses questions trop franches ont éveillé l'intérêt, elles ont aussi suscité l'ire des puissants. Pourtant, ses actions transmettent aux générations futures l'importance du « courage de penser ». Sur le « forum » moderne des réseaux sociaux, sommes-nous capables de véritablement remettre les choses en question plutôt que de simplement affirmer nos propres opinions ?" }, zh: { title: "古希腊雅典的集市：哲学家苏格拉底与市民交谈的市场。" , description: "如果熙熙攘攘的街道是终极学习空间，会怎样？这幅人工智能生成的立体模型描绘了苏格拉底在古雅典集市上与市民交谈的场景。他没有去宏伟的讲堂，而是在市场上，向所有人提问，希望找到隐藏的答案。他过于直率的问题虽然唤醒了人们，但也招致了当权者的愤怒。然而，他的行为向后世传达了“勇于思考”的重要性。在社交媒体这个现代“论坛”上，我们是否也能够真正地质疑事物，而不是简单地坚持自己的观点？" } },
+            { id: 6, era: 'ancient' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(21).jpg?raw=true' , popular: false , aiPrompt: "Miniature model of the Parthenon: The temple on the hill and the sculptors. Diorama-style, shot with a tilt-shift lens, bird's-eye view, exquisite detail, photorealistic" , ja: { title: "パルテノン神殿の建設：丘の上にそびえ立つ神殿と彫刻家たち。" , description: "大理石の白亜がアテネの空に輝きはじめたとき、人々はどんな誇りを胸に抱いたのでしょうか――このAI生成ジオラマは、丘の上で建設が進むパルテノン神殿と、それを刻む彫刻家たちの姿を切り取っています。神殿は女神アテナへの奉納であると同時に、ペルシャ戦争を勝ち抜いた市民たちの団結の象徴でもありました。柱の傾きや曲線の微妙な工夫は、遠目には完璧に見えるよう計算されたもの。信仰と技術、そして市民の誇りが融合した建築は、今も世界中の人々を魅了しています。私たちの街や建物には、果たしてどんな「未来へのメッセージ」が刻まれているのでしょうか" }, en: { title: "Building the Parthenon: the temple on the hill and the sculptors." , description: "What kind of pride must have filled the hearts of the people when the white marble began to sparkle in the Athenian sky? This AI-generated diorama captures the Parthenon as it is constructed on a hilltop, along with the sculptors carving it. The temple was a dedication to the goddess Athena, and also a symbol of the unity of the citizens who had survived the Persian Wars. The subtle ingenuity of the tilt and curves of the columns was calculated to appear perfect from a distance. This architecture, which combines faith, technology, and civic pride, continues to fascinate people all over the world. What 'messages for the future' are engraved in our cities and buildings?" }, fr: { title: "Construction du Parthénon : le temple sur la colline et les sculpteurs." , description: "Quelle fierté a dû éprouver le peuple lorsque le marbre blanc a commencé à scintiller dans le ciel athénien ? Ce diorama généré par l’IA capture la progression de la construction du Parthénon au sommet de la colline, ainsi que celle des sculpteurs. Dédié à la déesse Athéna, le temple symbolisait aussi l’unité des citoyens ayant survécu aux guerres médiques. L’ingéniosité subtile de l’inclinaison et des courbes des colonnes a été calculée pour paraître parfaite de loin. Cette architecture, qui allie foi, technologie et fierté civique, continue de fasciner le monde entier. Quels « messages pour l’avenir » sont gravés dans nos villes et nos bâtiments ?" }, zh: { title: "建造帕特农神庙：山上的寺庙和雕塑家。" , description: "当白色大理石在雅典的天空中闪耀时，人们心中一定充满了怎样的自豪？这幅人工智能生成的立体模型捕捉了帕特农神庙在山顶的建造过程，以及雕塑家们的雕刻。这座神庙是献给雅典娜女神的，同时也象征着在波斯战争中幸存下来的公民的团结。柱子的倾斜和曲线经过精心设计，从远处看似乎完美无瑕。这座融合了信仰、科技和公民自豪感的建筑，至今仍在世界各地吸引着人们。我们的城市和建筑中，镌刻着怎样的“未来信息”？" } },
+            { id: 7, era: 'ancient' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(24).jpg?raw=true' , popular: false , aiPrompt: "Miniature model of [Ancient Olympic Games: Spectators enthusiastically watching the discus throw and chariot race], diorama-style, shot with a tilt-shift lens, bird's-eye view, extremely detailed, photorealistic" , ja: { title: "古代オリンピックの競技：円盤投げや戦車競走に熱狂する観客。" , description: "勝利の冠は金でも銀でもなく、オリーブの枝――そんな誇り高き舞台が古代オリンピックでした。このAI生成ジオラマは、円盤投げに挑む選手や戦車競走に沸く観客たちを再現しています。当時の競技は単なる娯楽ではなく、神々への奉納であり、都市国家同士の誇りをかけた真剣勝負でした。戦火すら一時停めて行われたオリンピアの祭典は、人々に平和の瞬間と「人間の力の限界」を示したのです。私たちのスポーツ観戦や国際大会にも、同じように競争を超えた「結びつき」の力があるのではないでしょうか。" }, en: { title: "Ancient Olympic Games: Spectators enthralled by the discus throw and chariot races." , description: "The crown of victory was not gold or silver, but an olive branch - such was the proud stage of the ancient Olympic Games. This AI-generated diorama recreates athletes competing in the discus throw and spectators excitedly watching a chariot race. At the time, competitions were not simply entertainment, but offerings to the gods and serious contests that put the pride of city-states on the line. The Olympic Games, which were held with even the flames of war temporarily halted, offered people a moment of peace and demonstrated the limits of human power. Perhaps our spectator sports and international competitions also have the power of connection that transcends competition." }, fr: { title: "Jeux olympiques antiques : les spectateurs sont captivés par le lancer du disque et les courses de chars." , description: "La couronne de la victoire n'était ni d'or ni d'argent, mais un rameau d'olivier – telle était la scène des Jeux olympiques antiques. Ce diorama généré par l'IA recrée des athlètes s'affrontant au lancer du disque et des spectateurs enthousiastes assistant à une course de chars. À l'époque, les compétitions n'étaient pas de simples divertissements, mais des offrandes aux dieux et des épreuves sérieuses qui mettaient en jeu la fierté des cités-États. Les Jeux olympiques, qui se déroulaient alors que même les flammes de la guerre étaient temporairement éteintes, offraient un moment de paix et démontraient les limites de la puissance humaine. Peut-être nos sports-spectacles et nos compétitions internationales possèdent-ils aussi ce pouvoir de connexion qui transcende la compétition." }, zh: { title: "古代奥运会：观众着迷于掷铁饼和战车比赛。" , description: "胜利的桂冠并非金银，而是橄榄枝——这便是古代奥运会引以为豪的舞台。这幅AI生成的立体模型，重现了掷铁饼的运动员和兴奋地观看战车比赛的观众的场景。当时，比赛并非单纯的娱乐活动，而是对神的祭祀，更是关乎城邦尊严的严肃较量。在战火暂时停息的时代举行的奥运会，为人们带来了片刻的宁静，也展现了人类力量的极限。或许，我们的观赏性体育赛事和国际赛事，也拥有超越竞争的联结力量。" } },
+            { id: 8, era: 'ancient' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(27).jpg?raw=true' , popular: false , aiPrompt: "Miniature model of the Trojan Horse: Trojan citizens pulling a giant wooden horse into the city. Diorama-style, shot with a tilt-shift lens, bird's-eye view, extremely detailed, photorealistic" , ja: { title: "トロイアの木馬：巨大な木馬を城内に引き入れるトロイア市民。" , description: "信じる心が招いた悲劇――このAI生成ジオラマは、巨大な木馬を城内に引き入れるトロイアの市民たちの緊張と期待の瞬間を描いています。外見は贈り物に見えた木馬の中にはギリシャ兵が隠れ、好奇心と油断が街の運命を決めました。市民たちは勝利の象徴と信じ、祭り気分で迎え入れたその行動が、都市全体を陥落へと導いたのです。この物語は、私たちに見かけに惑わされず、本質を見極める重要性を教えてくれます。" }, en: { title: "Trojan Horse: The Trojans pull a giant wooden horse into the city." , description: "Tragedy brought about by faith - this AI-generated diorama depicts the moment of tension and anticipation of the Trojan citizens as they drag a giant wooden horse into their city. While the horse appeared to be a gift, Greek soldiers were hiding inside, and curiosity and carelessness decided the fate of the city. Believing it to be a symbol of victory, the citizens welcomed it with a festive mood, but their actions ultimately led to the fall of the entire city. This story teaches us the importance of not being fooled by appearances, but rather of seeing the true essence." }, fr: { title: "Cheval de Troie : Les Troyens tirent un cheval de bois géant dans la ville." , description: "Tragédie engendrée par la foi – ce diorama généré par l'IA dépeint le moment de tension et d'impatience des citoyens troyens alors qu'ils traînent un cheval de bois géant dans leur ville. Alors que le cheval semblait être un cadeau, des soldats grecs s'y cachaient, et la curiosité et l'insouciance décidèrent du sort de la ville. Considérant ce cheval comme un symbole de victoire, les citoyens l'accueillirent avec une humeur festive, mais leurs actions finirent par entraîner la chute de la ville entière. Cette histoire nous enseigne l'importance de ne pas se fier aux apparences, mais de voir la véritable essence." }, zh: { title: "特洛伊木马：特洛伊人将一匹巨大的木马拉进城。" , description: "信仰引发的悲剧——这幅人工智能生成的立体模型描绘了特洛伊城居民将一匹巨大的木马拖入城中时，紧张而又充满期待的瞬间。这匹木马看似是一件礼物，却藏匿于其中，好奇心和疏忽大意最终决定了这座城市的命运。居民们将其视为胜利的象征，满怀喜悦地迎接它，但他们的行为最终却导致了整座城市的覆灭。这个故事告诉我们，不要被外表所迷惑，而要看清事物的本质。" } },
+            { id: 9, era: 'ancient' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(30).jpg?raw=true' , popular: false , aiPrompt: "Miniature model of 'Hannibal's Crossing of the Alps: Carthaginian Army and Elephant Procession through the Snowy Mountains.' Diorama-style, shot with a tilt-shift lens, bird's-eye view, exquisite detail, photorealistic" , ja: { title: "ハンニバルのアルプス越え：雪山を進むカルタゴ軍と象の行列。" , description: "想像を超える挑戦――このAI生成ジオラマは、雪に覆われたアルプスを越えるハンニバル率いるカルタゴ軍と象たちの壮絶な行軍を描いています。凍える寒さと険しい山道、そして食糧や装備の不足にもかかわらず、兵士たちは不屈の意志で前進しました。この冒険は軍事戦略の驚異であると同時に、人間の勇気と忍耐の象徴でもあります。私たちに問いかけるのは、現代の困難に直面したとき、どれだけ困難に立ち向かい、挑戦を乗り越える覚悟があるかということです。" }, en: { title: "Hannibal's crossing of the Alps: Carthaginian army and elephant procession advancing through the snowy mountains." , description: "An unimaginable challenge - this AI-generated diorama depicts the epic march of Hannibal's Carthaginian army and elephants across the snow-covered Alps. Despite the freezing cold, rugged mountain paths, and a lack of food and equipment, the soldiers pressed on with unyielding determination. This adventure is both a marvel of military strategy and a symbol of human courage and perseverance. It challenges us to consider how resilient we are to rise to the challenge and overcome it when faced with modern-day challenges." }, fr: { title: "La traversée des Alpes par Hannibal : armée carthaginoise et cortège d'éléphants avançant à travers les montagnes enneigées." , description: "Un défi inimaginable : ce diorama généré par l'IA dépeint la marche épique de l'armée carthaginoise d'Hannibal et de ses éléphants à travers les Alpes enneigées. Malgré le froid glacial, les sentiers de montagne accidentés et le manque de nourriture et d'équipement, les soldats ont persévéré avec une détermination inébranlable. Cette aventure est à la fois une merveille de stratégie militaire et un symbole de courage et de persévérance humains. Elle nous pousse à réfléchir à notre capacité de résilience pour relever le défi et le surmonter face aux défis contemporains." }, zh: { title: "汉尼拔翻越阿尔卑斯山：迦太基军队和大象队伍在雪山中前进。" , description: "这场挑战难以想象——这幅人工智能生成的立体模型描绘了汉尼拔率领迦太基军队和战象穿越白雪皑皑的阿尔卑斯山的史诗级行军场景。尽管山路崎岖，寒风凛冽，物资匮乏，士兵们依然以不屈不挠的意志继续前进。这场冒险既是军事战略的奇迹，也是人类勇气和毅力的象征。它挑战我们，让我们思考，在当今的挑战面前，我们究竟拥有多么坚韧的韧性，能够迎接并克服挑战。" } },
+            { id: 10, era: 'ancient' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(33).jpg?raw=true' , popular: false , aiPrompt: "Miniature model of the Roman Forum: the center of Rome where senators met for discussion. Diorama-style, shot with a tilt-shift lens, bird's-eye view, extremely detailed, photorealistic" , ja: { title: "古代ローマのフォロ・ロマーノ：元老院議員たちが議論を交わすローマの中心地。" , description: "古代ローマの政治の鼓動を感じてみませんか？このAI生成ジオラマは、フォロ・ロマーノの広場で元老院議員たちが熱心に議論を交わす様子を再現しています。彫像や建築の細部まで緻密に描かれ、当時の市民や政治家の緊張感や駆け引きが伝わってきます。教科書にはないのは、議論の背後にある個々の野心や信念、そして市民の目線に立った政治のリアルさです。現代の私たちに問いかけるのは、政治や社会の決定に対して、どれだけ主体的に考え、行動できるかということです。" }, en: { title: "The Roman Forum in ancient Rome: the heart of Rome where senators met and debated." , description: "Would you like to feel the pulse of ancient Roman politics? This AI-generated diorama recreates the scene of senators engaged in heated debate in the square of the Roman Forum. The statues and architectural details are meticulously rendered, conveying the tension and maneuvering between citizens and politicians of the time. What you won't find in textbooks is the individual ambitions and beliefs behind the debates, as well as the realism of politics from the citizen's perspective. The question it raises for us today is how independently we can think and act regarding political and social decisions." }, fr: { title: "Le Forum romain dans la Rome antique : le cœur de Rome où les sénateurs se réunissaient et débattaient." , description: "Envie de prendre le pouls de la politique romaine antique ? Ce diorama généré par l'IA recrée la scène de sénateurs engagés dans des débats houleux sur la place du Forum romain. Les statues et les détails architecturaux sont minutieusement reproduits, traduisant les tensions et les manœuvres entre citoyens et politiciens de l'époque. Ce que vous ne trouverez pas dans les manuels scolaires, ce sont les ambitions et les convictions individuelles qui sous-tendent ces débats, ainsi que le réalisme de la politique vue du point de vue du citoyen. La question que cela soulève aujourd'hui est de savoir dans quelle mesure nous pouvons penser et agir de manière indépendante face aux décisions politiques et sociales." }, zh: { title: "古罗马的罗马广场：罗马的中心，参议员们在此开会和辩论。" , description: "想感受古罗马政治的脉搏吗？这款人工智能生成的立体模型重现了元老院议员在古罗马广场上激烈辩论的场景。雕塑和建筑细节都经过精心雕琢，展现了当时公民与政客之间的紧张角力和角力。教科书里无法展现辩论背后的个人抱负和信仰，以及从公民视角看待政治的现实性。它向我们提出了一个问题：在当今社会，我们究竟能在多大程度上独立思考和应对政治和社会决策。" } },
+            { id: 11, era: 'ancient' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(36).jpg?raw=true' , popular: false , aiPrompt: "Miniature model of a gladiator fight in the Colosseum: a duel between the emperor and the spectators. Diorama-style, shot with a tilt-shift lens, bird's-eye view, extremely detailed, photorealistic" , ja: { title: "コロッセオでの剣闘士の戦い：皇帝と観客が見守る中での決闘。" , description: "古代ローマの闘技場に響く歓声を感じてみませんか？このジオラマは、コロッセオで剣闘士たちが命を懸けて戦う様子を、皇帝や熱狂する観客の視線と共に再現しています。剣闘士の緊張や勇気、観客の期待と興奮が交錯する場面は、歴史書だけでは伝わらない人間ドラマの一端です。現代の私たちに問いかけるのは、娯楽や競争の裏にある倫理や勇気、そして人間の本性について考える視点です。" }, en: { title: "Gladiator fights in the Colosseum: a duel between the emperor and the spectators." , description: "Would you like to feel the cheers echoing through the arena of ancient Rome? This diorama recreates the scene of gladiators fighting for their lives in the Colosseum, with the emperor and enthusiastic spectators watching. The interplay of the gladiators' tension and courage and the spectators' anticipation and excitement is a glimpse of human drama that cannot be conveyed through history books alone. It challenges us today to consider the ethics and courage behind entertainment and competition, as well as human nature." }, fr: { title: "Combats de gladiateurs au Colisée : un duel entre l'empereur et les spectateurs." , description: "Envie de ressentir les acclamations résonner dans l'arène de la Rome antique ? Ce diorama recrée la scène des gladiateurs luttant pour leur survie dans le Colisée, sous le regard de l'empereur et d'un public enthousiaste. L'interaction entre la tension et le courage des gladiateurs et l'impatience et l'excitation des spectateurs offre un aperçu du drame humain que les livres d'histoire ne peuvent retranscrire à eux seuls. Il nous invite aujourd'hui à réfléchir à l'éthique et au courage qui sous-tendent le divertissement et la compétition, ainsi qu'à la nature humaine." }, zh: { title: "角斗士在罗马斗兽场中战斗：皇帝和观众之间的决斗。" , description: "想感受古罗马竞技场上回荡的欢呼声吗？这座立体模型重现了角斗士在罗马斗兽场中殊死搏斗的场景，皇帝和热情的观众都目不转睛地注视着这一切。角斗士们的紧张与勇气，与观众的期待与兴奋交织在一起，展现了仅凭历史书籍无法展现的人类戏剧。它挑战着我们，去思考娱乐和竞技背后的伦理与勇气，以及人性。" } },
+            { id: 12, era: 'ancient' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(39).jpg?raw=true' , popular: false , aiPrompt: "Miniature model of [The Last Days of Pompeii: [The Last Days of Pompeii: Many people fleeing the pyroclastic flow caused by the eruption of Mount Vesuvius are being engulfed by the huge pyroclastic flow approaching them.], diorama style, shot with a tilt-shift lens, bird's-eye view, extremely detailed, photorealistic" , ja: { title: "ポンペイ最後の日：[ポンペイ最後の日：ヴェスヴィオ火山の噴火による火砕流から逃げ惑うたくさんの人々が、すぐ近くに迫る巨大な火砕流に飲み込まれつつある。" , description: "人々の悲鳴と熱気に包まれる一瞬、ポンペイの街は永遠に時を止めました。このジオラマは、ヴェスヴィオ火山の噴火により逃げ惑う市民たちと迫り来る火砕流を、絶望と混乱の中で描き出しています。当時の住民たちは、日常の生活から突然の災害に直面し、恐怖と焦燥の入り混じった表情を浮かべていました。この出来事は、自然の力に対する人間の無力さと、命の尊さを現代に伝えています。" }, en: { title: "The Last Day of Pompeii: [The Last Day of Pompeii: Many people fleeing from the pyroclastic flow caused by the eruption of Mount Vesuvius are being swallowed up by the huge pyroclastic flow approaching nearby." , description: "For a moment, engulfed in the screams and excitement of the people, time stood still forever in the city of Pompeii. This diorama depicts the despair and confusion of the fleeing citizens and the approaching pyroclastic flow caused by the eruption of Mount Vesuvius. The residents of the time, faced with a sudden disaster that had left their everyday lives behind, wore expressions of fear and frustration. This event conveys to the present day the powerlessness of humans against the power of nature and the preciousness of life." }, fr: { title: "Le Dernier Jour de Pompéi : [Le Dernier Jour de Pompéi : De nombreuses personnes fuyant la coulée pyroclastique provoquée par l'éruption du Vésuve sont englouties par l'énorme coulée pyroclastique qui s'approche à proximité." , description: "L'espace d'un instant, submergé par les cris et l'excitation de la population, le temps s'est arrêté à jamais dans la ville de Pompéi. Ce diorama dépeint le désespoir et la confusion des citoyens en fuite face à l'approche de la coulée pyroclastique provoquée par l'éruption du Vésuve. Face à une catastrophe soudaine qui avait bouleversé leur quotidien, les habitants de l'époque exprimaient la peur et la frustration. Cet événement témoigne encore aujourd'hui de l'impuissance des humains face à la puissance de la nature et à la préciosité de la vie." }, zh: { title: "庞贝的末日：【庞贝的末日：许多逃离维苏威火山爆发引起的火山碎屑流的人们，正被附近逼近的巨大火山碎屑流吞噬。" , description: "庞贝古城，在人们的尖叫与激动中，时间仿佛静止了。这幅透视模型描绘了逃难民众的绝望与慌乱，以及维苏威火山爆发带来的火山碎屑流的逼近。当时的居民面对着突如其来的灾难，日常生活被抛诸脑后，脸上流露出恐惧与沮丧。这一事件至今仍传达着人类在自然力量面前的无力感，以及生命的珍贵。" } },
+            { id: 13, era: 'ancient' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(42).jpg?raw=true' , popular: false , aiPrompt: "Miniature model of 'Construction of the Great Wall: The Great Wall and Workers Along the Rugged Mountains.' Diorama-style, shot with a tilt-shift lens, bird's-eye view, exquisite detail, photorealistic" , ja: { title: "万里の長城の建設：険しい山々に沿って続く長城と労働者たち。" , description: "「こんな山々を越えて、本当にあの長城は築かれたのか？」このジオラマは、険しい山並みに沿って延びる万里の長城と、それを築く無数の労働者たちの姿を緻密に再現しています。当時の労働者たちは過酷な環境の中、家族や故郷を思いながら石を運び、汗と泥にまみれて長城を築き上げました。その努力と忍耐は、後世にわたる防衛の象徴として今も人々に語り継がれています。私たちは現代において、この偉業からどんな困難も人々の連帯と工夫で乗り越えられるという視点を学べるのではないでしょうか。" }, en: { title: "Building the Great Wall: The wall and workers stretching along the rugged mountains." , description: "'Was the Great Wall really built across such mountains?' This diorama meticulously recreates the Great Wall stretching along the rugged mountain ranges, along with the countless workers who built it. The workers of the time carried stones in harsh conditions, thinking of their families and hometowns, and built the wall covered in sweat and mud. Their efforts and perseverance are still passed down to people today as a symbol of defense for future generations. Perhaps we can learn from this feat today that any difficulty can be overcome through human solidarity and ingenuity." }, fr: { title: "Construction de la Grande Muraille : Le mur et les ouvriers s'étendant le long des montagnes escarpées." , description: "« La Grande Muraille a-t-elle vraiment été construite sur de telles montagnes ? » Ce diorama recrée minutieusement la Grande Muraille s'étendant le long de chaînes de montagnes escarpées, ainsi que les innombrables ouvriers qui l'ont construite. Les ouvriers de l'époque ont transporté des pierres dans des conditions difficiles, pensant à leurs familles et à leurs villes natales, et ont construit le mur couvert de sueur et de boue. Leurs efforts et leur persévérance sont encore transmis aujourd'hui comme un symbole de défense pour les générations futures. Peut-être pouvons-nous apprendre de cet exploit aujourd'hui que toute difficulté peut être surmontée grâce à la solidarité et à l'ingéniosité humaines." }, zh: { title: "修建长城：沿着崎岖的山脉修建的长城和工人们。" , description: "“长城真的是建在如此险峻的山峦之上吗？”这幅立体模型细致地再现了沿着险峻山脉绵延的长城，以及无数筑城工人的辛勤劳作。当时的工人们在艰苦的条件下搬运石头，怀念着家人和家乡，汗流浃背地用汗水和泥土筑起了长城。他们的辛勤劳动和坚韧不拔的精神至今仍被人们传承，成为后代保卫长城的象征。或许，我们可以从这一壮举中汲取教训，相信任何困难都可以通过人类的团结和智慧来克服。" } },
+            { id: 14, era: 'ancient' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(46).jpg?raw=true' , popular: false , aiPrompt: "Miniature model of [Qin Shi Huang and the Terracotta Warriors: Countless warriors lined up in an orderly fashion in the underground palace.], diorama-style, shot with a tilt-shift lens, bird's-eye view, extremely detailed, photorealistic" , ja: { title: "秦の始皇帝と兵馬俑：地下宮殿に整然と並ぶ無数の兵士の俑。" , description: "「地下に眠る無数の兵士たち、その一体一体に魂が宿るようです。」このジオラマは、秦の始皇帝の地下宮殿に整然と並ぶ兵馬俑を精巧に再現しています。兵馬俑は単なる墓の守護者ではなく、当時の軍事組織や人々の信仰心、皇帝の権威を象徴していました。一体一体の表情や装備が異なるのは、職人たちが魂を込めて作った証とも言われています。現代に生きる私たちに、この壮大なプロジェクトが示す「継続する努力と人の創造力の力」を思い起こさせてくれます。" }, en: { title: "Qin Shi Huang and the Terracotta Army: Countless warrior figures lined up in an orderly fashion in the underground palace." , description: "'The countless soldiers resting underground seem as if each one has a soul.' This diorama is an intricate reproduction of the Terracotta Warriors, neatly arranged in the underground palace of Qin Shi Huang. The Terracotta Warriors were more than just guardians of the tomb; they symbolized the military organization of the time, the faith of the people, and the authority of the emperor. The fact that each one has a different expression and equipment is said to be proof that the artisans poured their souls into their creations. For us living in the modern era, this grand project reminds us of the 'power of sustained effort and human creativity.'" }, fr: { title: "Qin Shi Huang et l'armée de terre cuite : d'innombrables guerriers alignés de manière ordonnée dans le palais souterrain." , description: "« Les innombrables soldats qui reposent sous terre semblent chacun dotés d'une âme. » Ce diorama est une reproduction complexe des guerriers de terre cuite, soigneusement disposés dans le palais souterrain de Qin Shi Huang. Les guerriers de terre cuite étaient plus que de simples gardiens du tombeau ; ils symbolisaient l'organisation militaire de l'époque, la foi du peuple et l'autorité de l'empereur. Leur expression et leur équipement différents témoigneraient de l'âme des artisans qui ont donné vie à leurs créations. Pour nous, vivant à l'ère moderne, ce projet grandiose nous rappelle la puissance de l'effort soutenu et de la créativité humaine." }, zh: { title: "秦始皇与兵马俑：无数的兵马俑在地宫中整齐排列。" , description: "“无数的兵马俑长眠地下，仿佛每个人都拥有灵魂。”这个立体模型以精湛的工艺，重现了秦始皇陵墓中整齐排列的兵马俑。兵马俑不仅仅是陵墓的守护者，更是当时军事组织、人民信仰和皇帝权威的象征。据说，每个兵马俑都拥有不同的表情和装备，这证明了工匠们倾注了灵魂。对于生活在现代的我们来说，这项宏伟的工程提醒我们“持续努力和人类创造力的力量”。" } },
+            { id: 15, era: 'ancient' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(49).jpg?raw=true' , popular: false , aiPrompt: "Miniature model of the Great Library of Alexandria: Scholars reading scrolls containing the world's knowledge. Diorama-style, shot with a tilt-shift lens, bird's-eye view, exquisite detail, photorealistic" , ja: { title: "アレクサンドリアの大図書館：世界中の知識が詰まった巻物を読む学者たち。" , description: "「もしもすべての知識が一つの場所に集まったら、どんな世界が広がるのでしょうか？」このジオラマは、アレクサンドリアの大図書館で巻物を手に知識を追求する学者たちの姿を再現しています。古代世界中から集められた膨大な書物は、学者たちの探究心と好奇心を支え、時には政治や権力との葛藤も生んだと言われます。その壮大な知の集積は、失われた後も人類に「学び続けることの価値」を問いかけています。" }, en: { title: "The Great Library of Alexandria: Scholars read scrolls filled with the world's knowledge." , description: "'What kind of world would unfold if all knowledge were gathered in one place?' This diorama recreates the image of scholars in the Great Library of Alexandria, scrolls in hand, pursuing knowledge. The vast collection of books collected from all over the ancient world is said to have fueled scholars' inquisitiveness and curiosity, and at times even given rise to conflicts with politics and power. This magnificent accumulation of knowledge challenges humanity to consider the value of continuing to learn, even after it has been lost." }, fr: { title: "La Grande Bibliothèque d'Alexandrie : les érudits lisent des parchemins remplis de connaissances du monde." , description: "« Quel monde se dévoilerait si tout le savoir était rassemblé en un seul lieu ? » Ce diorama recrée l'image des érudits de la Grande Bibliothèque d'Alexandrie, rouleaux à la main, en quête de savoir. On dit que cette vaste collection de livres provenant de tout le monde antique a nourri la curiosité des érudits, et a même parfois donné lieu à des conflits avec la politique et le pouvoir. Cette magnifique accumulation de connaissances interpelle l'humanité et l'amène à considérer l'importance de continuer à apprendre, même après sa disparition." }, zh: { title: "亚历山大图书馆：学者们阅读充满世界知识的卷轴。" , description: "“如果所有知识都汇聚一处，世界将会是怎样的景象？”这幅立体模型重现了亚历山大图书馆里学者们手捧卷轴、追寻知识的景象。据说，从古代世界各地收集而来的海量藏书激发了学者们的求知欲和好奇心，有时甚至引发了与政治和权力的冲突。这些浩瀚的知识​​积累促使人类思考，即使知识已经失传，继续学习的价值。" } },
+            { id: 16, era: 'medieval' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(53).jpg?raw=true' , popular: false , aiPrompt: "Miniature model of a Viking longship: A Viking fleet emerges from a sea of ​​mist and lands on the shore. Diorama-style, shot with a tilt-shift lens, bird's-eye view, extremely detailed, photorealistic" , ja: { title: "ヴァイキングのロングシップ：霧の海から現れ、海岸に上陸するヴァイキング船団。" , description: "「霧の向こうに現れる影、そこに待つのは海を制した戦士たち——ヴァイキングの船団です。」このジオラマは、荒波と霧の中、ロングシップで海岸に上陸するヴァイキングたちの緊張と勇敢さを再現しています。彼らの航海術や戦略は当時のヨーロッパに衝撃を与え、多くの文化交流や交易の契機にもなりました。現代に生きる私たちは、この冒険心と未知への挑戦心から何を学べるでしょうか。" }, en: { title: "Viking Longship: A fleet of Viking ships emerges from the sea of ​​fog and lands on the coast." , description: "'A shadow appears beyond the mist, and there, waiting are warriors who have conquered the seas - a fleet of Vikings.' This diorama recreates the tension and bravery of the Vikings as they land on the shore in their longships amidst rough waves and mist. Their navigational skills and strategy shocked Europe at the time, and also sparked numerous cultural exchanges and trade. What can we, living in the modern world, learn from this spirit of adventure and determination to challenge the unknown?" }, fr: { title: "Drakkar viking : Une flotte de navires vikings émerge de la mer de brouillard et débarque sur la côte." , description: "« Une ombre apparaît au-delà de la brume, et là, attendent les guerriers qui ont conquis les mers : une flotte de Vikings. » Ce diorama recrée la tension et le courage des Vikings alors qu'ils débarquent sur leurs drakkars au milieu des vagues déchaînées et de la brume. Leurs talents de navigateur et leur stratégie ont bouleversé l'Europe de l'époque et ont également suscité de nombreux échanges culturels et commerciaux. Que pouvons-nous apprendre, nous qui vivons dans le monde moderne, de cet esprit d'aventure et de cette détermination à défier l'inconnu ?" }, zh: { title: "维京长船：一支维京船队从雾海中出现并登陆海岸。" , description: "“薄雾之后，一道阴影浮现，等待着征服海洋的勇士——一支维京舰队。”这幅立体模型重现了维京人驾着长船，在波涛汹涌、迷雾弥漫的环境中登陆时的紧张与勇敢。他们的航海技术和战略震惊了当时的欧洲，也激发了无数的文化交流和贸易。生活在现代世界的我们，能从这种敢于挑战未知的冒险精神中学到什么呢？" } },
+            { id: 17, era: 'medieval' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(56).jpg?raw=true' , popular: false , aiPrompt: "Miniature model of [King Arthur and the Knights of the Round Table: A meeting scene at Camelot Castle (legend)], diorama style, shot with a tilt-shift lens, bird's-eye view, extremely detailed, photorealistic" , ja: { title: "アーサー王と円卓の騎士：キャメロット城での会議風景。（伝説）" , description: "「円卓を囲む影、そこには忠誠と友情、そして冒険の誓いが交わされていた——。」このジオラマは、キャメロット城でアーサー王と円卓の騎士たちが会議を交わす伝説の一場面を再現しています。騎士たちの個性や信念がぶつかり合いながらも、王への忠誠と理想の追求が物語を動かしました。現代を生きる私たちも、この理想への挑戦や仲間との信頼の大切さから何を学べるでしょうか。" }, en: { title: "King Arthur and the Knights of the Round Table: Meeting at Camelot Castle. (Legend)" , description: "'Shadows surround the Round Table, where loyalty, friendship, and vows of adventure are exchanged.' This diorama recreates a scene from the legend of King Arthur and the Knights of the Round Table meeting at Camelot Castle. Though the knights' personalities and beliefs clash, their loyalty to the king and pursuit of ideals drive the story. What can we learn from this modern-day challenge to ideals and the importance of trust among comrades?" }, fr: { title: "Le roi Arthur et les chevaliers de la Table ronde : rencontre au château de Camelot. (Légende)" , description: "« Des ombres entourent la Table Ronde, lieu d'échange de loyauté, d'amitié et de vœux d'aventure. » Ce diorama recrée une scène de la légende du roi Arthur et des chevaliers de la Table Ronde réunis au château de Camelot. Bien que les personnalités et les croyances des chevaliers soient contradictoires, leur loyauté envers le roi et leur quête d'idéaux sont au cœur de l'histoire. Que pouvons-nous apprendre de cette remise en question contemporaine des idéaux et de l'importance de la confiance entre camarades ?" }, zh: { title: "亚瑟王与圆桌骑士：在卡米洛特城堡会面。（传说）" , description: "“阴影笼罩着圆桌，忠诚、友谊和冒险的誓言在此交换。”这幅立体模型重现了亚瑟王与圆桌骑士在卡美洛城堡会面的传奇场景。尽管骑士们的性格和信仰相互冲突，但他们对国王的忠诚和对理想的追求推动着故事的发展。从这场对理想的现代挑战以及同伴之间信任的重要性中，我们可以学到什么？" } },
+            { id: 18, era: 'medieval' , region: 'europe' , theme: 'architecture' , imageUrl: 'https://github.com/kaname-smith/museum_galary/blob/main/Image_fx%20(59).jpg?raw=true' , popular: false , aiPrompt: "Miniature model of the Crusader siege of Jerusalem: Knights and catapults attacking the city walls. Diorama-style, shot with a tilt-shift lens, bird's-eye view, extremely detailed, photorealistic" , ja: { title: "十字軍のエルサレム攻囲：城壁を攻撃する騎士団と投石機。" , description: "「遠くから響く戦鼓の音、城壁を目指す十字軍の影——。」このジオラマは、十字軍がエルサレムを攻囲し、投石機や槍を手に城壁に迫る緊迫の瞬間を再現しています。騎士たちは信仰と栄誉を胸に戦い、民衆は恐怖と希望の入り混じった表情で見守りました。この歴史的光景は、現代に生きる私たちに、信念と暴力、そして人間の複雑な感情が歴史を動かすことを教えてくれます。" }, en: { title: "Crusader siege of Jerusalem: Knights and catapults attacking the city walls." , description: "'The sound of war drums echoing in the distance, the shadows of Crusaders approaching the city walls...' This diorama recreates the tense moment when Crusaders besieged Jerusalem, approaching the city walls with catapults and spears in hand. The knights fought with faith and honor in their hearts, while the people looked on with expressions of fear and hope. This historical scene teaches us today that belief, violence, and the complex emotions of human beings move history." }, fr: { title: "Siège des croisés de Jérusalem : chevaliers et catapultes attaquant les murs de la ville." , description: "« Le son des tambours de guerre résonnant au loin, les ombres des Croisés s'approchant des remparts… » Ce diorama recrée le moment tendu où les Croisés assiégèrent Jérusalem, s'approchant des remparts, catapultes et lances à la main. Les chevaliers combattirent avec foi et honneur, tandis que le peuple observait, empreint de crainte et d'espoir. Cette scène historique nous enseigne aujourd'hui que la foi, la violence et les émotions complexes des êtres humains façonnent l'histoire." }, zh: { title: "十字军围攻耶路撒冷：骑士和投石车攻击城墙。" , description: "“战鼓声在远方回荡，十字军的身影逼近城墙……”这幅立体模型重现了十字军围攻耶路撒冷的紧张时刻，他们手持投石车和长矛逼近城墙。骑士们怀着信念和荣誉奋战，而民众则带着恐惧和希望的表情注视着这一切。这一历史场景在今天告诉我们，信仰、暴力以及人类复杂的情感推动着历史的进程。" } }
+            ];
+
+        // --- DOM Elements ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const langToggle = document.getElementById('lang-toggle');
+        const currentLangSpan = document.getElementById('current-lang');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const pages = document.querySelectorAll('.page');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const galleryGrid = document.getElementById('gallery-grid');
+        const filters = document.getElementById('filters');
+        const modalContainer = document.getElementById('modal-container');
+        const modalContent = document.getElementById('modal-content');
+        const modalClose = document.getElementById('modal-close');
+        const heroSlides = document.querySelectorAll('.hero-slide');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const latestContainer = document.getElementById('latest-exhibits');
+        const popularContainer = document.getElementById('popular-exhibits');
+        const newsletterForm = document.getElementById('newsletter-form');
+
+        const supportedLangs = ['ja', 'en', 'fr', 'zh'];
+        let currentLang = localStorage.getItem('lang') || 'ja';
+        if (!supportedLangs.includes(currentLang)) {
+            currentLang = 'ja';
+        }
+        
+        // ▼ 6. 画像の遅延読み込み (Lazy Loading) ▼
+        const placeholderImage = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+        // --- Functions ---
+        
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('lang', lang);
+            document.documentElement.lang = lang;
+            
+            document.body.classList.remove('ja', 'en', 'fr', 'zh');
+            document.body.classList.add(lang);
+
+            currentLangSpan.textContent = lang.toUpperCase();
+            
+            const trans = translations[lang];
+            
+            document.title = trans.site_title;
+
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                el.textContent = trans[el.dataset.langKey];
+            });
+
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const heroTitle = document.getElementById('hero-title');
+            const heroSubtitle = document.getElementById('hero-subtitle');
+            heroTitle.textContent = trans[isDarkMode ? 'hero_title_night' : 'hero_title_day'];
+            heroSubtitle.textContent = trans[isDarkMode ? 'hero_subtitle_night' : 'hero_subtitle_day'];
+
+            const newsletterInput = document.querySelector('[data-lang-key="newsletter_placeholder"]');
+            if(newsletterInput) newsletterInput.placeholder = trans.newsletter_placeholder;
+
+            document.querySelectorAll('select[data-lang-key-options]').forEach(select => {
+                const key = select.dataset.langKeyOptions;
+                const options = trans[key];
+                const selectedValue = select.value;
+                if(options) {
+                    select.innerHTML = '';
+                    for (const value in options) {
+                        const optionEl = document.createElement('option');
+                        optionEl.value = value;
+                        optionEl.textContent = options[value];
+                        select.appendChild(optionEl);
+                    }
+                    select.value = selectedValue;
+                }
+            });
+
+            renderHomeExhibits();
+            filterExhibits();
+        }
+        
+        // ▼ 5. 各展示への直接リンク機能 (Routing) ▼
+        function navigateTo(pageId, noPush = false) {
+            const currentPage = document.querySelector('.page:not(.hidden)');
+            const nextPage = document.getElementById(pageId);
+
+            if (currentPage && currentPage.id !== pageId) {
+                // 1. 現在のページに退出アニメーションクラスを追加
+                currentPage.classList.add('is-exiting');
+
+                // 2. アニメーション完了後に処理を実行
+                currentPage.addEventListener('transitionend', () => {
+                    currentPage.classList.add('hidden');
+                    currentPage.classList.remove('is-exiting');
+                    
+                    // 3. 次のページを表示し、入場アニメーションクラスを追加
+                    nextPage.classList.remove('hidden', 'is-entering');
+
+                }, { once: true }); // イベントリスナーを一度だけ実行
+
+                // 次のページをアニメーションの初期状態にする
+                nextPage.classList.add('is-entering');
+                // 少し遅れてクラスを外すことでアニメーションを開始
+                setTimeout(() => {
+                    nextPage.classList.remove('is-entering');
+                }, 50);
+
+            } else if (!currentPage) {
+                // 初回読み込み時
+                nextPage.classList.remove('hidden');
+            }
+
+            window.scrollTo(0, 0);
+            mobileMenu.classList.add('hidden');
+            if (!noPush && window.location.hash !== `#${pageId}`) {
+                history.pushState({page: pageId}, '', `#${pageId}`);
+            }
+        }
+        
+        // ▼ 6. 画像の遅延読み込み (Lazy Loading) ▼
+        const lazyImageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.onerror = () => { img.src = 'https://placehold.co/600x600/ccc/999?text=Error'; }; // Add fallback
+                    img.classList.remove('lazy-image');
+                    observer.unobserve(img);
+                }
+            });
+        });
+
+        function renderGallery(items) {
+            galleryGrid.innerHTML = '';
+            items.forEach(item => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'gallery-item group relative overflow-hidden rounded-lg cursor-pointer shadow-lg';
+                const langData = item[currentLang] || item['en'];
+                // ▼ 3. アクセシビリティ (Accessibility) - alt属性を動的に設定 ▼
+                itemEl.innerHTML = `
+                    <img src="${placeholderImage}" data-src="${item.imageUrl}" alt="${langData.title}" class="lazy-image w-full h-full object-cover transform transition-transform duration-500 ease-in-out">
+                    <div class="absolute inset-0 bg-black/50 flex items-end p-4 transition-opacity duration-500 opacity-0 group-hover:opacity-100">
+                        <h3 class="gallery-item-title text-white text-lg font-bold opacity-0 transform translate-y-4 transition-all duration-300 ease-in-out">${langData.title}</h3>
+                    </div>
+                `;
+                itemEl.addEventListener('click', () => openModal(item));
+                galleryGrid.appendChild(itemEl);
+                lazyImageObserver.observe(itemEl.querySelector('.lazy-image'));
+            });
+        }
+        
+        function renderHomeExhibits() {
+            const latest = [...exhibits].reverse().slice(0, 3);
+            const popular = exhibits.filter(e => e.popular).slice(0, 3);
+
+            const createExhibitCard = (item) => {
+                const langData = item[currentLang] || item['en'];
+                const trans = translations[currentLang];
+                return `
+                <div class="card-bg-day rounded-lg shadow-lg overflow-hidden group cursor-pointer" onclick="openModalById(${item.id})">
+                    <div class="overflow-hidden h-64">
+                        <img src="${placeholderImage}" data-src="${item.imageUrl}" alt="${langData.title}" class="lazy-image w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">${langData.title}</h3>
+                        <p class="opacity-80">${trans.filter_era_options[item.era]} / ${trans.filter_region_options[item.region]}</p>
+                    </div>
+                </div>
+            `};
+            
+            latestContainer.innerHTML = latest.map(createExhibitCard).join('');
+            popularContainer.innerHTML = popular.map(createExhibitCard).join('');
+            
+            document.querySelectorAll('.lazy-image').forEach(img => lazyImageObserver.observe(img));
+        }
+
+        window.openModalById = (id) => {
+             const item = exhibits.find(e => e.id === id);
+             if (item) openModal(item);
+        }
+
+        function filterExhibits() {
+             const filterValues = {
+                era: filters.querySelector('[data-filter="era"]').value,
+                region: filters.querySelector('[data-filter="region"]').value,
+                theme: filters.querySelector('[data-filter="theme"]').value
+            };
+            const filtered = exhibits.filter(item => 
+                (filterValues.era === 'all' || item.era === filterValues.era) &&
+                (filterValues.region === 'all' || item.region === filterValues.region) &&
+                (filterValues.theme === 'all' || item.theme === filterValues.theme)
+            );
+            renderGallery(filtered);
+        }
+        
+        // ▼ 7. モーダル機能の強化 (コピーボタン、SNSシェア) ▼
+        function openModal(item) {
+            const trans = translations[currentLang];
+            const langData = item[currentLang] || item['en'];
+            const exhibitUrl = `${window.location.origin}${window.location.pathname}#exhibit/${item.id}`;
+
+            modalContent.innerHTML = `
+                <img src="${item.imageUrl}" alt="${langData.title}" class="w-full h-96 object-cover rounded-lg mb-6">
+                <h2 class="text-3xl font-bold mb-2">${langData.title}</h2>
+                <div class="text-sm opacity-70 mb-6">
+                    <span>${trans.filter_era_options[item.era]}</span> | <span>${trans.filter_region_options[item.region]}</span> | <span>${trans.filter_theme_options[item.theme]}</span>
+                </div>
+                <div class="space-y-4 leading-relaxed">
+                    <h3 class="text-xl font-bold accent-text">${trans.modal_curator_notes}</h3>
+                    <p>${langData.description}</p>
+                    
+                    <div class="flex justify-between items-center mt-4">
+                        <h3 class="text-xl font-bold accent-text">${trans.modal_ai_prompt}</h3>
+                        <button id="copy-prompt-btn" class="text-sm bg-stone-200 dark-mode:bg-gray-700 px-3 py-1 rounded-md hover:opacity-80 transition-opacity">
+                            <i class="fa-solid fa-copy mr-2"></i><span data-lang-key="modal_copy_prompt">${trans.modal_copy_prompt}</span>
+                        </button>
+                    </div>
+                    <p id="ai-prompt-text" class="text-sm bg-stone-200 dark-mode:bg-gray-800 p-4 rounded-md font-mono text-opacity-80">${item.aiPrompt}</p>
+
+                    <div class="border-t border-day pt-6 mt-6">
+                         <h3 class="text-xl font-bold accent-text mb-4">${trans.modal_share}</h3>
+                         <div class="flex items-center space-x-4">
+                             <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(langData.title)}&url=${encodeURIComponent(exhibitUrl)}" target="_blank" rel="noopener noreferrer" class="text-2xl hover:opacity-75"><i class="fa-brands fa-x-twitter"></i></a>
+                             <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(exhibitUrl)}" target="_blank" rel="noopener noreferrer" class="text-2xl hover:opacity-75"><i class="fa-brands fa-facebook"></i></a>
+                         </div>
+                    </div>
+                </div>
+            `;
+            modalContainer.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            history.pushState({modal: item.id}, '', `#exhibit/${item.id}`); 
+            
+            document.getElementById('copy-prompt-btn').addEventListener('click', (e) => {
+                const button = e.currentTarget;
+                const promptText = document.getElementById('ai-prompt-text').textContent;
+                navigator.clipboard.writeText(promptText).then(() => {
+                    button.querySelector('span').textContent = trans.modal_copied;
+                    setTimeout(() => {
+                        button.querySelector('span').textContent = trans.modal_copy_prompt;
+                    }, 2000);
+                });
+            });
+
+            setTimeout(() => modalContent.classList.add('modal-enter'), 10);
+        }
+        
+        function closeModal() {
+            modalContent.classList.remove('modal-enter');
+            modalContent.classList.add('modal-leave');
+            
+            // モーダルを閉じたときにページのハッシュに戻す
+            const pageId = window.location.hash.split('/')[0].substring(1) || 'home';
+            const targetPage = pageId.startsWith('exhibit') ? 'gallery' : pageId;
+            history.pushState({page: targetPage}, '', `#${targetPage}`);
+
+            setTimeout(() => {
+                modalContainer.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+                modalContent.classList.remove('modal-leave');
+            }, 300);
+        }
+        
+        function handleRouting() {
+            const hash = window.location.hash;
+            if (hash.startsWith('#exhibit/')) {
+                const id = parseInt(hash.split('/')[1]);
+                const item = exhibits.find(e => e.id === id);
+                if (item) {
+                    navigateTo('gallery', true);
+                    openModal(item);
+                } else {
+                    navigateTo('home');
+                }
+            } else {
+                const pageId = hash.substring(1) || 'home';
+                const targetPage = document.getElementById(pageId);
+                if (targetPage && targetPage.classList.contains('page')) {
+                    navigateTo(pageId, true);
+                } else {
+                    navigateTo('home');
+                }
+            }
+        }
+
+        let slideIndex = 0;
+        function showSlides() {
+            heroSlides.forEach(slide => slide.style.display = "none");
+            slideIndex++;
+            if (slideIndex > heroSlides.length) {slideIndex = 1}
+            heroSlides[slideIndex-1].style.display = "block";
+            setTimeout(showSlides, 5000); 
+        }
+
+        // --- Event Listeners ---
+        langToggle.addEventListener('click', () => {
+            const currentIndex = supportedLangs.indexOf(currentLang);
+            const nextIndex = (currentIndex + 1) % supportedLangs.length;
+            setLanguage(supportedLangs[nextIndex]);
+        });
+
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            sunIcon.classList.toggle('hidden');
+            moonIcon.classList.toggle('hidden');
+            setLanguage(currentLang);
+        });
+
+        document.addEventListener('mousemove', e => {
+            if(document.body.classList.contains('dark-mode')){
+                 document.documentElement.style.setProperty('--cursor-x', e.clientX + 'px');
+                 document.documentElement.style.setProperty('--cursor-y', e.clientY + 'px');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (!modalContainer.classList.contains('hidden')) closeModal();
+                navigateTo(link.dataset.page);
+            });
+        });
+        
+        filters.addEventListener('change', filterExhibits);
+        
+        modalContainer.addEventListener('click', (e) => {
+            if (e.target === modalContainer) closeModal();
+        });
+        modalClose.addEventListener('click', closeModal);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modalContainer.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+        
+        window.addEventListener('popstate', (event) => {
+            if (!event.state || (!event.state.modal && !event.state.page)) {
+                // Initial load or unknown state
+                handleRouting();
+            } else if (event.state.page) {
+                // Page navigation
+                if (!modalContainer.classList.contains('hidden')) closeModal();
+                navigateTo(event.state.page, true);
+            } else if (event.state.modal) {
+                // Modal navigation
+                const item = exhibits.find(e => e.id === event.state.modal);
+                if (item) openModal(item);
+            }
+        });
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        newsletterForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const status = document.getElementById('form-status');
+            const trans = translations[currentLang];
+            try {
+                const response = await fetch(form.action, {
+                    method: form.method,
+                    body: data,
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (response.ok) {
+                    status.textContent = trans.form_success;
+                    form.reset();
+                } else {
+                    status.textContent = trans.form_error;
+                }
+            } catch (error) {
+                status.textContent = trans.form_error;
+            }
+        });
+
+        // --- Initialization ---
+        setLanguage(currentLang);
+        showSlides();
+        handleRouting(); 
+    });
+    </script>
+</body>
+</html>
